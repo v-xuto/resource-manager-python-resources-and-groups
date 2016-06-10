@@ -39,7 +39,7 @@ using the Azure Python SDK.
 1. Clone the repository.
 
     ```
-    git clone https://github.com/Azure-Samples/resource-manager-python-template-deployment.git
+    git clone https://github.com/Azure-Samples/resource-manager-python-resources-and-groups.git
     ```
 
 1. Install the dependencies using pip.
