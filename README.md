@@ -27,7 +27,7 @@ using the Azure Python SDK.
 
 1. If you don't already have it, [install Python](https://www.python.org/downloads/).
 
-1. We recommend to use a [virtual environnement](https://docs.python.org/3/tutorial/venv.html) to run this example, but it's not mandatory. This can initialize a virtualenv this way:
+1. We recommend to use a [virtual environnement](https://docs.python.org/3/tutorial/venv.html) to run this example, but it's not mandatory. You can initialize a virtualenv this way:
 
     ```
     pip install virtualenv
@@ -121,7 +121,7 @@ client.resource_groups.create_or_update('azure-sample-group', resource_group_par
 The sample adds a tag to the resource group.
 
 ```python
-resource_group_params.update(hello='world')
+resource_group_params.update(tags={'hello': 'world'})
 client.resource_groups.create_or_update('azure-sample-group', resource_group_params)
 ```
 
@@ -132,7 +132,7 @@ client.resource_groups.create_or_update('azure-sample-group', resource_group_par
 key_vault_params = {
     'location': 'westus',
     'properties':  {
-        'sku': { 'family': 'A', 'name': 'standard' },
+        'sku': {'family': 'A', 'name': 'standard'},
         'tenantId': os.environ['AZURE_TENANT_ID'],
         'accessPolicies': [],
         'enabledForDeployment': True,
