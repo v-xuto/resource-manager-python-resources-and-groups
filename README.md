@@ -4,7 +4,7 @@ platforms: python
 author: lmazuel
 ---
 
-# Managing Azure Resource and Resource Groups with Ruby
+# Managing Azure Resource and Resource Groups with Python
 
 This sample explains how to manage your
 [resources and resource groups in Azure](https://azure.microsoft.com/en-us/documentation/articles/resource-group-overview/#resource-groups)
