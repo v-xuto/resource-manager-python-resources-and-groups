@@ -45,7 +45,7 @@ using the Azure Python SDK.
 1. Install the dependencies using pip.
 
     ```
-    cd resource-manager-python-template-deployment
+    cd resource-manager-python-resources-and-groups
     pip install -r requirements.txt
     ```
 
