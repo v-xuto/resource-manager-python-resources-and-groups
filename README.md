@@ -4,7 +4,7 @@ platforms: python
 author: lmazuel
 ---
 
-# Managing Azure Resource and Resource Groups with Python
+# Manage Azure resources and resource groups with Python
 
 This sample explains how to manage your
 [resources and resource groups in Azure](https://azure.microsoft.com/en-us/documentation/articles/resource-group-overview/#resource-groups)
@@ -45,7 +45,7 @@ using the Azure Python SDK.
 1. Install the dependencies using pip.
 
     ```
-    cd resource-manager-python-template-deployment
+    cd resource-manager-python-resources-and-groups
     pip install -r requirements.txt
     ```
 
