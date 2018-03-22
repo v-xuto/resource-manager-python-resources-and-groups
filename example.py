@@ -1,10 +1,12 @@
 import os
 import json
+from datetime import datetime
 from azure.common.credentials import ServicePrincipalCredentials
 from azure.mgmt.resource import ResourceManagementClient
 
 WEST_US = 'westus'
 GROUP_NAME = 'azure-sample-group'
+
 
 # Manage resources and resource groups - create, update and delete a resource group,
 # deploy a solution into a resource group, export an ARM template. Create, read, update
@@ -17,6 +19,7 @@ GROUP_NAME = 'azure-sample-group'
 # AZURE_CLIENT_SECRET: with your Azure Active Directory Application Secret
 # AZURE_SUBSCRIPTION_ID: with your Azure Subscription Id
 #
+
 def run_example():
     """Resource Group management example."""
     #
@@ -24,18 +27,20 @@ def run_example():
     #
     subscription_id = os.environ.get(
         'AZURE_SUBSCRIPTION_ID',
-        '11111111-1111-1111-1111-111111111111') # your Azure Subscription Id
+        '11111111-1111-1111-1111-111111111111')  # your Azure Subscription Id
+
     credentials = ServicePrincipalCredentials(
         client_id=os.environ['AZURE_CLIENT_ID'],
         secret=os.environ['AZURE_CLIENT_SECRET'],
         tenant=os.environ['AZURE_TENANT_ID']
     )
+
     client = ResourceManagementClient(credentials, subscription_id)
 
     #
     # Managing resource groups
     #
-    resource_group_params = {'location':'westus'}
+    resource_group_params = {'location': 'westus'}
 
     # List Resource Groups
     print('List Resource Groups')
@@ -49,13 +54,13 @@ def run_example():
     # Modify the Resource group
     print('Modify Resource Group')
     resource_group_params.update(tags={'hello': 'world'})
-    print_item(client.resource_groups.create_or_update('azure-sample-group', resource_group_params))
+    print_item(client.resource_groups.create_or_update(GROUP_NAME, resource_group_params))
 
     # Create a Key Vault in the Resource Group
     print('Create a Key Vault via a Generic Resource Put')
     key_vault_params = {
         'location': 'westus',
-        'properties':  {
+        'properties': {
             'sku': {'family': 'A', 'name': 'standard'},
             'tenantId': os.environ['AZURE_TENANT_ID'],
             'accessPolicies': [],
@@ -68,7 +73,8 @@ def run_example():
                                       'Microsoft.KeyVault',
                                       '',
                                       'vaults',
-                                      'azureSampleVault',
+                                      # Suffix random string to make vault name unique
+                                      'azureSampleVault' + datetime.utcnow().strftime("-%H%M%S"),
                                       '2015-06-01',
                                       key_vault_params)
 
@@ -88,6 +94,7 @@ def run_example():
     delete_async_operation.wait()
     print("\nDeleted: {}".format(GROUP_NAME))
 
+
 def print_item(group):
     """Print a ResourceGroup instance."""
     print("\tName: {}".format(group.name))
@@ -96,12 +103,14 @@ def print_item(group):
     print("\tTags: {}".format(group.tags))
     print_properties(group.properties)
 
+
 def print_properties(props):
-    """Print a ResourceGroup propertyies instance."""
+    """Print a ResourceGroup properties instance."""
     if props and props.provisioning_state:
         print("\tProperties:")
         print("\t\tProvisioning State: {}".format(props.provisioning_state))
     print("\n\n")
+
 
 if __name__ == "__main__":
     run_example()
