@@ -80,7 +80,7 @@ def run_example():
 
     # List Resources within the group
     print('List all of the resources within the group')
-    for item in client.resource_groups.list_resources(GROUP_NAME):
+    for item in client.resources.list_by_resource_group(GROUP_NAME):
         print_item(item)
 
     # Export the Resource group template
