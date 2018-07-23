@@ -1,2 +1,2 @@
-azure-mgmt-resource==1.2.2
+azure-mgmt-resource==2.0.0
 haikunator
