@@ -51,14 +51,16 @@ def run_example():
     # Create Resource group
     print("Create Resource Group")
     print_item(
-        client.resource_groups.create_or_update(GROUP_NAME, resource_group_params)
+        client.resource_groups.create_or_update(
+            GROUP_NAME, resource_group_params)
     )
 
     # Modify the Resource group
     print("Modify Resource Group")
     resource_group_params.update(tags={"hello": "world"})
     print_item(
-        client.resource_groups.create_or_update(GROUP_NAME, resource_group_params)
+        client.resource_groups.create_or_update(
+            GROUP_NAME, resource_group_params)
     )
 
     # Create a Key Vault in the Resource Group
@@ -94,7 +96,8 @@ def run_example():
     print("Export Resource Group Template")
     print(
         json.dumps(
-            client.resource_groups.export_template(GROUP_NAME, ["*"]).template, indent=4
+            client.resource_groups.export_template(
+                GROUP_NAME, ["*"]).template, indent=4
         )
     )
     print("\n\n")
