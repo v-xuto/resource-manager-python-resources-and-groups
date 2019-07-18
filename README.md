@@ -1,8 +1,12 @@
 ---
-services: azure-resource-manager
-platforms: python
-author: lmazuel
+page_type: sample
+description: This sample explains how to manage your resources and resource groups in Azure using the Azure Python SDK.
+languages:
+  - python
+products:
+  - azure-sdks
 ---
+
 
 # Manage Azure resources and resource groups with Python
 
