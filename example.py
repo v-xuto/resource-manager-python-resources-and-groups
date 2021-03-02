@@ -1,7 +1,7 @@
 import os
 import json
 from datetime import datetime
-from azure.common.credentials import ServicePrincipalCredentials
+from azure.identity import ClientSecretCredential
 from azure.mgmt.resource import ResourceManagementClient
 
 WEST_US = "westus"
@@ -26,14 +26,12 @@ def run_example():
     #
     # Create the Resource Manager Client with an Application (service principal) token provider
     #
-    subscription_id = os.environ.get(
-        "AZURE_SUBSCRIPTION_ID", "11111111-1111-1111-1111-111111111111"
-    )  # your Azure Subscription Id
+    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None) # your Azure Subscription Id
 
-    credentials = ServicePrincipalCredentials(
+    credentials = ClientSecretCredential(
+        tenant_id=os.environ["AZURE_TENANT_ID"],
         client_id=os.environ["AZURE_CLIENT_ID"],
-        secret=os.environ["AZURE_CLIENT_SECRET"],
-        tenant=os.environ["AZURE_TENANT_ID"],
+        client_secret=os.environ["AZURE_CLIENT_SECRET"]
     )
 
     client = ResourceManagementClient(credentials, subscription_id)
@@ -59,7 +57,7 @@ def run_example():
     print("Modify Resource Group")
     resource_group_params.update(tags={"hello": "world"})
     print_item(
-        client.resource_groups.create_or_update(
+        client.resource_groups.update(
             GROUP_NAME, resource_group_params)
     )
 
@@ -73,19 +71,19 @@ def run_example():
             "accessPolicies": [],
             "enabledForDeployment": True,
             "enabledForTemplateDeployment": True,
-            "enabledForDiskEncryption": True,
+            "enabledForDiskEncryption": True
         },
     }
-    client.resources.create_or_update(
-        GROUP_NAME,
-        "Microsoft.KeyVault",
-        "",
-        "vaults",
+    client.resources.begin_create_or_update(
+        resource_group_name=GROUP_NAME,
+        resource_provider_namespace="Microsoft.KeyVault",
+        parent_resource_path="",
+        resource_type="vaults",
         # Suffix random string to make vault name unique
-        "azureSampleVault" + datetime.utcnow().strftime("-%H%M%S"),
-        "2015-06-01",
-        key_vault_params,
-    )
+        resource_name="azureSampleVault" + datetime.utcnow().strftime("-%H%M%S"),
+        api_version="2019-09-01",
+        parameters=key_vault_params
+    ).result()
 
     # List Resources within the group
     print("List all of the resources within the group")
@@ -94,17 +92,20 @@ def run_example():
 
     # Export the Resource group template
     print("Export Resource Group Template")
+    BODY = {
+      'resources': ['*']
+    }
     print(
         json.dumps(
-            client.resource_groups.export_template(
-                GROUP_NAME, ["*"]).template, indent=4
+            client.resource_groups.begin_export_template(
+                GROUP_NAME, BODY).result().template, indent=4
         )
     )
     print("\n\n")
 
     # Delete Resource group and everything in it
     print("Delete Resource Group")
-    delete_async_operation = client.resource_groups.delete(GROUP_NAME)
+    delete_async_operation = client.resource_groups.begin_delete(GROUP_NAME)
     delete_async_operation.wait()
     print("\nDeleted: {}".format(GROUP_NAME))
 

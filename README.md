@@ -81,16 +81,14 @@ It starts by setting up a ResourceManagementClient object using your subscriptio
 
 ```python
 import os
-from azure.common.credentials import ServicePrincipalCredentials
+from azure.identity import ClientSecretCredential
 from azure.mgmt.resource import ResourceManagementClient
 
-subscription_id = os.environ.get(
-    'AZURE_SUBSCRIPTION_ID',
-    '11111111-1111-1111-1111-111111111111') # your Azure Subscription Id
-credentials = ServicePrincipalCredentials(
-    client_id=os.environ['AZURE_CLIENT_ID'],
-    secret=os.environ['AZURE_CLIENT_SECRET'],
-    tenant=os.environ['AZURE_TENANT_ID']
+subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)) # your Azure Subscription Id
+credentials = ClientSecretCredential(
+    tenant_id=os.environ["AZURE_TENANT_ID"],
+    client_id=os.environ["AZURE_CLIENT_ID"],
+    client_secret=os.environ["AZURE_CLIENT_SECRET"]
 )
 client = ResourceManagementClient(credentials, subscription_id)
 ```
@@ -128,7 +126,7 @@ The sample adds a tag to the resource group.
 
 ```python
 resource_group_params.update(tags={'hello': 'world'})
-client.resource_groups.create_or_update('azure-sample-group', resource_group_params)
+client.resource_groups.update('azure-sample-group', resource_group_params)
 ```
 
 <a id="create-resource"></a>
@@ -146,20 +144,20 @@ key_vault_params = {
         'enabledForDiskEncryption': True
     }
 }
-client.resources.create_or_update(GROUP_NAME,
-                                  'Microsoft.KeyVault',
-                                  '',
-                                  'vaults',
-                                  'azureSampleVault',
-                                  '2015-06-01',
-                                  key_vault_params)
+client.resources.create_or_update(resource_group_name=GROUP_NAME,
+                                  resource_provider_namespace="Microsoft.KeyVault",
+                                  parent_resource_path="",
+                                  resource_type="vaults",
+                                  resource_name="azureSampleVault"),
+                                  api_version="2019-09-01",
+                                  parameters=key_vault_params)
 ```
 
 <a id="list-resources"></a>
 ### List resources within the group
 
 ```python
-for item in client.resource_groups.list_resources(GROUP_NAME):
+for item in client.resources.list_by_resource_group(GROUP_NAME):
     print_item(item)
 ```
 
@@ -167,13 +165,14 @@ for item in client.resource_groups.list_resources(GROUP_NAME):
 ### Export the resource group template
 
 ```python
-client.resource_groups.export_template(GROUP_NAME, ['*'])
+BODY = {'resources': ['*']}
+client.resource_groups.begin_export_template(GROUP_NAME, BODY).result()
 ```
 
 <a id="delete-group"></a>
 ### Delete a resource group
 
 ```python
-delete_async_operation = client.resource_groups.delete('azure-sample-group')
+delete_async_operation = client.resource_groups.begin_delete('azure-sample-group')
 delete_async_operation.wait()
 ```
